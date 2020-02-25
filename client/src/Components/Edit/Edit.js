@@ -6,6 +6,7 @@ import {
     Paper,
     TextField,
     Button,
+    Grid,
 } from '@material-ui/core';
 import EditTable from '../EditTable/EditTable';
 import SearchIcon from '@material-ui/icons/Search';
@@ -382,7 +383,7 @@ export default class Edit extends Component {
             newTitle
         } = this.state;
 
-        return <div className={classes.route}>
+        return <Grid item xs={12} className={classes.route}>
             {!findHidden ? (
                 <Container 
                     className={classes.container}
@@ -480,6 +481,6 @@ export default class Edit extends Component {
                     </Paper>
                 </Container>
             ) : null }
-        </div>
+        </Grid>
     }
 }

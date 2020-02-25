@@ -13,9 +13,7 @@ import Edit from './Components/Edit/Edit';
 import Record from './Components/Record/Record';
 import { 
   withStyles,
-  TextField,
-  Button,
-  Container
+  Grid
 } from '@material-ui/core';
 
 const styles = theme => ({
@@ -31,7 +29,9 @@ const styles = theme => ({
     }
   },
   container: {
+    maxWidth: 'unset',
     padding: '15px',
+    marginBottom: '10px',
     display: 'flex',
     backgroundColor: theme.palette.background.paper,
     borderRadius: `${theme.shape.borderRadius}px`,
@@ -112,7 +112,7 @@ const styles = theme => ({
 
   // Main, Account, Edit, Record return
   route: {
-    margin: '2% 8% 0',
+    margin: '1% 6% 0',
     paddingBottom: '2%'
   },
 
@@ -187,9 +187,24 @@ const styles = theme => ({
     }
   },
 
+  // Main Styles
+
+  tabTable: {
+    maxHeight: '70vh',
+  },
+
+  tabCell: {
+    paddingLeft: '40px',
+  },
+
+  tabTitle: {
+    color: theme.palette.text.primary,
+    fontSize: '1.25em',
+  },
+
   // Sheet Styles
   sheet: {
-    marginTop: `${theme.spacing(4)}px`,
+    paddingBottom: `${theme.spacing(4)}px`,
   },
 
   // PersonTable Styles
@@ -253,7 +268,7 @@ class App extends Component {
     super(props);
     this.state = {
       loading: false,
-      display: 'main',
+      logInDisplay: false,
       logInUsername: '',
       logInPassword: '',
       account: {
@@ -274,6 +289,8 @@ class App extends Component {
       dbRecord: []
     }
     this.handleDisplay = this.handleDisplay.bind(this);
+    this.handleUsername = this.handleUsername.bind(this);
+    this.handlePassword = this.handlePassword.bind(this);
     this.handleLogOut = this.handleLogOut.bind(this);
     this.postLogIn = this.postLogIn.bind(this);
     this.postSpread = this.postSpread.bind(this);
@@ -285,11 +302,18 @@ class App extends Component {
     this.postSpread();
   }
 
-  handleDisplay(event) { this.setState({ display: event }); }
+  handleDisplay(event) { 
+    const { logInDisplay } = this.state;
+    if (event) {
+      this.setState({ logInDisplay: event }); 
+    } else this.setState({ logInDisplay: !logInDisplay });
+  }
+  handleUsername(event) { this.setState({ logInUsername: event }); }
+  handlePassword(event) { this.setState({ logInPassword: event }); }
 
   handleLogOut() {
     this.setState({ 
-      display: 'login',
+      logInDisplay: true,
       account: {
         id: '',
         spreadId: 1,
@@ -327,7 +351,7 @@ class App extends Component {
       // Success true.
       this.setState({ 
         loading: false,
-        display: 'main',
+        logInDisplay: false,
         logInUsername: '',
         logInPassword: '',
         account: response.data.data.client,
@@ -467,7 +491,7 @@ class App extends Component {
       classes
     } = this.props, { 
       loading, 
-      display, 
+      logInDisplay, 
       logInUsername, 
       logInPassword, 
       account, 
@@ -477,129 +501,67 @@ class App extends Component {
     } = this.state;
 
     return <div className={classes.app}>
-      <Router>
-        {/* Header - Navbar to navigate between Searching Database and Adding Data to Database(Index) */}
-          <Header 
-            classes={classes}
-            account={account}
-            handleDisplay={this.handleDisplay}
-            handleLogOut={this.handleLogOut}
-          />
-        {/* Switch to determine the path followed by clicked Link */}
-        <Switch>
-          <Route exact path='/'>
-            {account.username === '' && display === 'login' ? (
-              <div className={classes.route}>
-                <Container className={classes.container}>
-                  <TextField
-                    className={classes.input}
-                    InputLabelProps={{
-                        classes: {
-                            focused: classes.focused
-                        },
-                    }}
-                    InputProps={{
-                        classes: {
-                            root: classes.outline,
-                            focused: classes.focused,
-                            notchedOutline: classes.notchedOutline
-                        },
-                    }}
-                    label={'Username'}
-                    value={logInUsername}
-                    onChange={event => this.setState({ logInUsername: event.target.value })}
-                    variant='outlined'
-                    onKeyPress={event => {
-                      if (logInUsername === '' || logInPassword === '') return
-                      if(event.key === 'Enter') {
-                        event.preventDefault();
-                        this.postLogIn();
-                      }
-                    }}
-                  />
-                  <TextField
-                    className={classes.input}
-                    style={{ marginLeft: '10px' }}
-                    type='password'
-                    InputLabelProps={{
-                        classes: {
-                            focused: classes.focused
-                        },
-                    }}
-                    InputProps={{
-                        classes: {
-                            root: classes.outline,
-                            focused: classes.focused,
-                            notchedOutline: classes.notchedOutline
-                        },
-                    }}
-                    label={'Password'}
-                    value={logInPassword}
-                    onChange={event => this.setState({ logInPassword: event.target.value }) }
-                    variant='outlined'
-                    onKeyPress={event => {
-                      if (logInUsername === '' || logInPassword === '') return
-                      if(event.key === 'Enter') {
-                        event.preventDefault();
-                        this.postLogIn();
-                      }
-                    }}
-                  />
-                  <Button
-                    className={classes.btn}
-                    style={{ marginLeft: '10px' }}
-                    onClick={() => {
-                      if (logInUsername === '' || logInPassword === '') return
-                      this.postLogIn()
-                    }}
-                  >Log in</Button>
-                </Container>
-              </div>
-            ) : (
-              !loading ? (
+      <Grid container>
+        <Router>
+          {/* Header - Navbar to navigate between Searching Database and Adding Data to Database(Index) */}
+            <Header 
+              classes={classes}
+              account={account}
+              handleDisplay={this.handleDisplay}
+              handleLogOut={this.handleLogOut}
+            />
+          {/* Switch to determine the path followed by clicked Link */}
+          <Switch>
+            <Route exact path='/'>
+              {!loading ? (
                 <Main 
+                  classes={classes}
+                  logInDisplay={logInDisplay}
+                  logInUsername={logInUsername}
+                  logInPassword={logInPassword}
+                  account={account}
+                  dbSpread={dbSpread}
+                  handleUsername={this.handleUsername}
+                  handlePassword={this.handlePassword}
+                  postLogIn={this.postLogIn}
+                  putSheet={this.putSheet}
+                />
+              ) : null}
+            </Route>
+            <Route path='/account'>
+              {!loading && account.username !== '' ? (
+                <Account
                   classes={classes}
                   account={account}
                   dbSpread={dbSpread}
-                  postSpread={this.postSpread}
-                  putSheet={this.putSheet}
+                  dbAccount={dbAccount}
+                  putAccount={this.putAccount}
                 />
-              ) : null
-            )}
-          </Route>
-          <Route path='/account'>
-            {!loading && account.username !== '' ? (
-              <Account
-                classes={classes}
-                account={account}
-                dbSpread={dbSpread}
-                dbAccount={dbAccount}
-                putAccount={this.putAccount}
-              />
-            ) : null }
-          </Route>
-          <Route path='/edit'>
-            {!loading && (account.type === 'admin' || account.type === 'master') && account.username !== '' ? (
-              <Edit
-                classes={classes}
-                account={account}
-                dbSpread={dbSpread}
-                putSheet={this.putSheet} 
-              />
-            ) : null }
-          </Route>
-          <Route path='/history'>
-            {!loading && (account.type === 'admin' || account.type === 'master') && account.username !== '' ? (
-              <Record 
-                classes={classes}
-                account={account}
-                dbAccount={dbAccount}
-                dbRecord={dbRecord}
-              />
-            ) : null }
-          </Route>
-        </Switch>
-      </Router>
+              ) : null }
+            </Route>
+            <Route path='/edit'>
+              {!loading && (account.type === 'admin' || account.type === 'master') && account.username !== '' ? (
+                <Edit
+                  classes={classes}
+                  account={account}
+                  dbSpread={dbSpread}
+                  putSheet={this.putSheet} 
+                />
+              ) : null }
+            </Route>
+            <Route path='/history'>
+              {!loading && (account.type === 'admin' || account.type === 'master') && account.username !== '' ? (
+                <Record 
+                  classes={classes}
+                  account={account}
+                  dbAccount={dbAccount}
+                  dbRecord={dbRecord}
+                />
+              ) : null }
+            </Route>
+          </Switch>
+        </Router>
+      </Grid>
     </div>
   }
 }

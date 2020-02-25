@@ -1,11 +1,23 @@
 import React, { Component } from 'react';
 import Search from '../Search/Search';
 import Sheet from '../Sheet/Sheet';
+import TableContainer from '@material-ui/core/TableContainer';
+import Table from '@material-ui/core/Table';
+import TableBody from '@material-ui/core/TableBody';
+import TableRow from '@material-ui/core/TableRow';
+import TableCell from '@material-ui/core/TableCell';
+import { 
+    Grid,
+    TextField,
+    Button,
+    Container,
+} from '@material-ui/core';
 
 export default class Main extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            loading: true,
             searchInput: '',
             searchHelper: '',
             display: [],
@@ -20,25 +32,30 @@ export default class Main extends Component {
 
     changeInput(event) {
         this.setState({
-            display: [],
             searchInput: event.target.value,
             searchHelper: ''
         });
     }
 
-    iterateSearch() {
+    iterateSearch(refresh) {
 
         const { 
             dbSpread 
-        } = this.props, { 
-            searchInput, 
-            display 
-        } = this.state,
-            input = searchInput.trim().toLowerCase(), 
+        } = this.props, {
+            searchInput
+        } = this.state;
+
+        let value = searchInput, 
+            sheetIdArray = [], 
+            sheetTitleArray = [];
+
+        if (refresh) value = refresh;
+
+        const resultArray = [],
+            reset = '',
+            input = value.trim().toLowerCase(), 
             inputArray = input.split(' '), 
             self = this;
-        let sheetIdArray = [], 
-            sheetTitleArray = [];
 
         dbSpread.sheet.forEach(sheet => {
             sheetTitleArray = sheet.title.toLowerCase().split(' ');
@@ -50,21 +67,38 @@ export default class Main extends Component {
             });
         });
 
-        dbSpread.sheet.forEach((sheet, i) => {
+        dbSpread.sheet.forEach(sheet => {
+            let result = reset;
             if (sheetIdArray.length === 0) {
-                self.handleSearch(sheet, inputArray);
+                result = self.handleSearch(sheet, inputArray);
+                if (result === undefined) return
+                result = self.handleSearch(sheet, inputArray);
+                if (result.includes('unshift')) {
+                    resultArray.unshift(result[0]);
+                } else {
+                    resultArray.push(result[0]);
+                }
             } else if (sheetIdArray.includes(sheet.id)) {
-                self.handleSearch(sheet, inputArray);
+                result = self.handleSearch(sheet, inputArray);
+                if (result.includes('unshift')) {
+                    resultArray.unshift(result[0]);
+                } else {
+                    resultArray.push(result[0]);
+                }
             }
         });
 
-        if (display.length < 1) this.setState({ searchHelper: `"${searchInput}" is not found.` });
+        if (resultArray.length < 1) return this.setState({ searchHelper: `"${value}" is not found.` });
+
+        this.setState({ 
+            loading: false,
+            display: resultArray 
+        });
     }
 
     handleSearch(sheet, inputArray) {
 
-        const newDisplay = this.state.display,
-            newMeta = [],
+        const newMeta = [],
             newPerson = [],
             input = inputArray.join(' ');
 
@@ -138,18 +172,20 @@ export default class Main extends Component {
         });
         
         if (unshiftObject) {
-            newDisplay.unshift(newObject);
-            this.setState({ display: newDisplay });
+            return [newObject, 'unshift']
         }
 
         if ((!unshiftObject && newPerson.length > 0) || inputArray.length === 0) {
-            newDisplay.push(newObject);
-            this.setState({ display: newDisplay });
+            return [newObject, 'push']
         }
     }
 
     resetDisplay() { 
-        this.setState({ display: [], editMode: '' }); 
+        this.setState({ 
+            loading: true,
+            display: [], 
+            editMode: '' 
+        }); 
     }
 
     setEditMode(event) { this.setState({ editMode: event }); }
@@ -158,8 +194,14 @@ export default class Main extends Component {
 
         const { 
             classes,
+            logInDisplay,
+            logInUsername,
+            logInPassword,
             account, 
             dbSpread, 
+            handleUsername,
+            handlePassword,
+            postLogIn,
             putSheet 
         } = this.props, { 
             searchInput, 
@@ -168,30 +210,133 @@ export default class Main extends Component {
             editMode 
         } = this.state;
 
-        return <div className={classes.route}>
+        return <Grid item xs={12} className={classes.route}>
+            {account.username === '' && logInDisplay ? (
+                <Container className={classes.container}>
+                    <TextField
+                        className={classes.input}
+                        InputLabelProps={{
+                            classes: {
+                                focused: classes.focused
+                            },
+                        }}
+                        InputProps={{
+                            classes: {
+                                root: classes.outline,
+                                focused: classes.focused,
+                                notchedOutline: classes.notchedOutline
+                            },
+                        }}
+                        label={'Username'}
+                        value={logInUsername}
+                        onChange={event => handleUsername(event.target.value)}
+                        variant='outlined'
+                        onKeyPress={event => {
+                        if (logInUsername === '' || logInPassword === '') return
+                        if(event.key === 'Enter') {
+                            event.preventDefault();
+                            postLogIn();
+                        }
+                        }}
+                    />
+                    <TextField
+                        className={classes.input}
+                        style={{ marginLeft: '10px' }}
+                        type='password'
+                        InputLabelProps={{
+                            classes: {
+                                focused: classes.focused
+                            },
+                        }}
+                        InputProps={{
+                            classes: {
+                                root: classes.outline,
+                                focused: classes.focused,
+                                notchedOutline: classes.notchedOutline
+                            },
+                        }}
+                        label={'Password'}
+                        value={logInPassword}
+                        onChange={event => handlePassword(event.target.value)}
+                        variant='outlined'
+                        onKeyPress={event => {
+                        if (logInUsername === '' || logInPassword === '') return
+                        if(event.key === 'Enter') {
+                            event.preventDefault();
+                            postLogIn();
+                        }
+                        }}
+                    />
+                    <Button
+                        className={classes.btn}
+                        style={{ marginLeft: '10px' }}
+                        onClick={() => {
+                        if (logInUsername === '' || logInPassword === '') return
+                        postLogIn()
+                        }}
+                    >Log in</Button>
+                </Container>
+            ) : null }
             <Search
                 classes={classes}
                 dbSpread={dbSpread}
                 searchInput={searchInput}
                 searchHelper={searchHelper}
+                resetDisplay={this.resetDisplay}
                 changeInput={this.changeInput}
                 iterateSearch={this.iterateSearch}
             />
-            {display.length !== 0 ? (
-                display.map((data, i) => {
-                    return <Sheet 
-                        key={`sheet-${i}`}
-                        classes={classes}
-                        account={account}
-                        dbSpread={dbSpread}
-                        putSheet={putSheet}
-                        data={data}
-                        editMode={editMode}
-                        setEditMode={this.setEditMode}
-                        resetDisplay={this.resetDisplay}
-                    />
-                })
-            ) : null }
-        </div>
+            <Grid container spacing={3}>
+                <Grid item xs={3}>
+                    <TableContainer className={`${classes.table} ${classes.tabTable}`}>
+                        <Table>
+                            <TableBody>
+                                {dbSpread.sheet.length !== 0 ? (
+                                    dbSpread.sheet.map((sheet, i) => {
+                                        return <TableRow>
+                                            <TableCell 
+                                                key={`ind-${i}`}
+                                                className={classes.tabCell}
+                                            >
+                                                <a
+                                                    className={classes.tabTitle}
+                                                    href='#'
+                                                    onClick={() => {
+                                                        this.resetDisplay();
+                                                        setTimeout(() => {
+                                                            this.iterateSearch(sheet.title);
+                                                        }, 500);
+                                                    }}
+                                                >{sheet.title}</a>
+                                            </TableCell>
+                                        </TableRow>
+                                    })
+                                ) : (
+                                    <TableCell>No Sheets</TableCell>
+                                )}
+                            </TableBody>
+                        </Table>
+                    </TableContainer>
+                </Grid>
+                <Grid item xs={9}>
+                    {display.length !== 0 ? (
+                        display.map((data, i) => {
+                            return <Sheet 
+                                key={`sheet-${i}`}
+                                classes={classes}
+                                account={account}
+                                dbSpread={dbSpread}
+                                putSheet={putSheet}
+                                data={data}
+                                editMode={editMode}
+                                setEditMode={this.setEditMode}
+                                searchInput={searchInput}
+                                resetDisplay={this.resetDisplay}
+                            />
+                        })
+                    ) : null }
+                </Grid>
+            </Grid>
+        </Grid>
     }
 }

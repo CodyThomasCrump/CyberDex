@@ -32,7 +32,12 @@ export default (props) => {
                             <TableCell className={props.classes.btnCell}>
                                 <Button
                                     className={props.classes.btn}
-                                    onClick={() => props.resetDisplay()}
+                                    onClick={() => {
+                                        props.resetDisplay();
+                                        setTimeout(() => {
+                                            props.iterateSearch(props.searchInput);
+                                        }, 500);
+                                    }}
                                 >
                                     <RestorePageIcon/>
                                 </Button>

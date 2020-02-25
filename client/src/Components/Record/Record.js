@@ -12,7 +12,8 @@ import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
 import { 
     Container, 
-    Button
+    Button,
+    Grid
 } from '@material-ui/core';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
@@ -102,7 +103,7 @@ export default class Record extends Component {
             currentPage 
         } = this.state;
 
-        return <div className={classes.route}>
+        return <Grid item xs={12} className={classes.route}>
             <Container className={classes.filter}>
                 <FormControl
                     className={classes.filterSelect}
@@ -301,6 +302,6 @@ export default class Record extends Component {
                     )}
                 </Container>
             ) : null }
-        </div>
+        </Grid>
     }
 }

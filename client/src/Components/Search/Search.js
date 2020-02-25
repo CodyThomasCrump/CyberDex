@@ -33,7 +33,10 @@ export default (props) => {
                 if (props.searchInput === '') return
                 if (event.key === 'Enter') {
                     event.preventDefault();
-                    props.iterateSearch();
+                    props.resetDisplay();
+                    setTimeout(() => {
+                        props.iterateSearch();
+                    }, 500);
                 }
             }}
         />
@@ -41,7 +44,10 @@ export default (props) => {
             className={props.classes.searchBtn}
             onClick={() => {
                 if (props.searchInput === '') return
-                props.iterateSearch();
+                props.resetDisplay();
+                setTimeout(() => {
+                    props.iterateSearch();
+                }, 500);
             }}
         >
             <SearchIcon/>

@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import AccountTable from '../AccountTable/AccountTable';
+import { Grid } from '@material-ui/core';
 
 export default class Account extends Component {
     constructor(props) {
@@ -397,7 +398,7 @@ export default class Account extends Component {
             newType
         } = this.state;
 
-        return <div className={classes.route}>
+        return <Grid item xs={12} className={classes.route}>
             <AccountTable
                 classes={classes}
                 dbSpread={dbSpread}
@@ -441,6 +442,6 @@ export default class Account extends Component {
                 addError={this.addError}
                 passError={this.passError}
             />
-        </div>
+        </Grid>
     }
 }
