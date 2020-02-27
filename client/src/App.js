@@ -152,10 +152,6 @@ const styles = theme => ({
     color: 'white',
     textDecoration: 'none'
   },
-
-
-  
-
   left: {
     width: 'unset',
     padding: '0',
@@ -165,10 +161,9 @@ const styles = theme => ({
     flexDirection: 'row',
   },
   right: {
-    width: 'unset',
     padding: '0',
     display: 'flex',
-    justifyContent: 'center',
+    justifyContent: 'flex-end',
     alignItems: 'center',
   },
   rightLink: {
@@ -186,9 +181,22 @@ const styles = theme => ({
       cursor: 'pointer',
     }
   },
+  headerMenu: {
+    display: 'flex',
+    justifyContent: 'center',
+    backgroundColor: theme.palette.secondary.main,
+    boxShadow: theme.shadows[24],
+    [theme.breakpoints.up('md')]: {
+      display: 'none'
+    }
+  },
 
   // Main Styles
-
+  tabMenu: {
+    [theme.breakpoints.down('sm')]: {
+      display: 'none'
+    }
+  },
   tabTable: {
     maxHeight: '70vh',
   },
@@ -218,13 +226,20 @@ const styles = theme => ({
     marginTop: `${theme.spacing(4)}px`,
     display: 'flex',
     justifyContent: 'space-between',
+    [theme.breakpoints.down('sm')]: {
+      flexDirection: 'column'
+    }
   },
   helpPage: {
     padding: '3%',
     width: '43%',
     fontSize: '10pt',
     borderRadius: `${theme.shape.borderRadius}px`,
-    boxShadow: theme.shadows[24]
+    boxShadow: theme.shadows[24],
+    [theme.breakpoints.down('sm')]: {
+      width: 'unset',
+      marginBottom: '10px'
+    }
   },
 
   // Record Styles
@@ -271,6 +286,7 @@ class App extends Component {
       logInDisplay: false,
       logInUsername: '',
       logInPassword: '',
+      dropdown: false,
       account: {
         id: 1,
         spreadId: 1,
@@ -289,6 +305,7 @@ class App extends Component {
       dbRecord: []
     }
     this.handleDisplay = this.handleDisplay.bind(this);
+    this.handleDropdown = this.handleDropdown.bind(this);
     this.handleUsername = this.handleUsername.bind(this);
     this.handlePassword = this.handlePassword.bind(this);
     this.handleLogOut = this.handleLogOut.bind(this);
@@ -308,12 +325,14 @@ class App extends Component {
       this.setState({ logInDisplay: event }); 
     } else this.setState({ logInDisplay: !logInDisplay });
   }
+  handleDropdown(event) { this.setState({ dropdown: event }); }
   handleUsername(event) { this.setState({ logInUsername: event }); }
   handlePassword(event) { this.setState({ logInPassword: event }); }
 
   handleLogOut() {
     this.setState({ 
       logInDisplay: true,
+      dropdown: false,
       account: {
         id: '',
         spreadId: 1,
@@ -494,6 +513,7 @@ class App extends Component {
       logInDisplay, 
       logInUsername, 
       logInPassword, 
+      dropdown,
       account, 
       dbSpread, 
       dbAccount, 
@@ -506,8 +526,10 @@ class App extends Component {
           {/* Header - Navbar to navigate between Searching Database and Adding Data to Database(Index) */}
             <Header 
               classes={classes}
+              dropdown={dropdown}
               account={account}
               handleDisplay={this.handleDisplay}
+              handleDropdown={this.handleDropdown}
               handleLogOut={this.handleLogOut}
             />
           {/* Switch to determine the path followed by clicked Link */}
