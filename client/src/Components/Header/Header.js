@@ -1,17 +1,22 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import useMediaQuery from '@material-ui/core/useMediaQuery';
 import {
+    withWidth,
     AppBar, 
     Toolbar,
     Container,
     Typography,
     Grid,
+    Button,
 } from '@material-ui/core';
 import AccountBoxIcon from '@material-ui/icons/AccountBox';
 import MenuIcon from '@material-ui/icons/Menu'
 
-export default (props) => {
+export default withWidth()(props => {
+
+    let state = {
+        dropdown: false
+    };
 
     return <Grid item xs={12}>
         <AppBar 
@@ -43,32 +48,66 @@ export default (props) => {
                 </Container>
                 <Container className={props.classes.right}>
                     {props.account.username !== '' ? (
-                        <>
-                            <Link
-                                className={props.classes.rightLink}
-                                to='/account'
-                            >Account</Link>
-                            {(props.account.type === 'admin' || props.account.type === 'master') ? (
-                                <>
-                                    <Link 
-                                        className={props.classes.rightLink}
-                                        to='/edit'
-                                    >Edit</Link>
-                                    <Link 
-                                        className={props.classes.rightLink}
-                                        to='/history' 
-                                    >History</Link>
-                                </>
-                            ) : null }
-                            <Link
-                                className={props.classes.rightLink}
-                                onClick={() => props.handleLogOut()}
-                                to='/'
-                            >Log out</Link>
-                        </>
+                        props.width !== 'xs' && props.width !== 'sm' ? (
+                            <>
+                                <Link
+                                    className={props.classes.rightLink}
+                                    to='/account'
+                                >Account</Link>
+                                {(props.account.type === 'admin' || props.account.type === 'master') ? (
+                                    <>
+                                        <Link 
+                                            className={props.classes.rightLink}
+                                            to='/edit'
+                                        >Edit</Link>
+                                        <Link 
+                                            className={props.classes.rightLink}
+                                            to='/history' 
+                                        >History</Link>
+                                    </>
+                                ) : null }
+                                <Link
+                                    className={props.classes.rightLink}
+                                    onClick={() => props.handleLogOut()}
+                                    to='/'
+                                >Log out</Link>
+                            </>
+                        ) : (
+                            <Button
+                                onClick={() => props.handleDropdown(!props.dropdown)}
+                            >
+                                <MenuIcon/>
+                            </Button>
+                        )
                     ) : null }
                 </Container>
             </Toolbar>
         </AppBar>
+        {props.dropdown === true ? (
+            <Container className={props.classes.headerMenu}
+            >
+                <Link
+                    className={props.classes.rightLink}
+                    to='/account'
+                >Account</Link>
+                {(props.account.type === 'admin' || props.account.type === 'master') ? (
+                    <>
+                        <Link 
+                            className={props.classes.rightLink}
+                            to='/edit'
+                        >Edit</Link>
+                        <Link 
+                            className={props.classes.rightLink}
+                            to='/history' 
+                        >History</Link>
+                    </>
+                ) : null }
+                <Link
+                    className={props.classes.rightLink}
+                    onClick={() => props.handleLogOut()}
+                    to='/'
+                >Log out</Link>
+            </Container>
+        ) : null }
     </Grid>
-}
+})

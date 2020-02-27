@@ -23,12 +23,11 @@ const theme = createMuiTheme({
             light: amber[200],
             dark: amber[900]
         },
-        // type: 'dark'
+        type: 'dark'
     },
 });
 
 console.log(theme);
-
 
 ReactDOM.render(
     <MuiThemeProvider theme={theme}>

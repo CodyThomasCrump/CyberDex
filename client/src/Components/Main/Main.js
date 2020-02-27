@@ -287,7 +287,7 @@ export default class Main extends Component {
                 iterateSearch={this.iterateSearch}
             />
             <Grid container spacing={3}>
-                <Grid item xs={3}>
+                <Grid item xs={3} className={classes.tabMenu}>
                     <TableContainer className={`${classes.table} ${classes.tabTable}`}>
                         <Table>
                             <TableBody>
@@ -318,7 +318,7 @@ export default class Main extends Component {
                         </Table>
                     </TableContainer>
                 </Grid>
-                <Grid item xs={9}>
+                <Grid item xs={12} md={9}>
                     {display.length !== 0 ? (
                         display.map((data, i) => {
                             return <Sheet 
