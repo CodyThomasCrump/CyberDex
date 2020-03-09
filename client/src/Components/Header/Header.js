@@ -1,33 +1,109 @@
-import React, { Component } from 'react';
-import { Link } from 'react-router-dom'
-import './Header.css';
+import React from 'react';
+import { Link } from 'react-router-dom';
+import {
+    withWidth,
+    AppBar, 
+    Toolbar,
+    Container,
+    Typography,
+    Grid,
+    Button,
+} from '@material-ui/core';
+import AccountBoxIcon from '@material-ui/icons/AccountBox';
+import MenuIcon from '@material-ui/icons/Menu';
 
-export default function Header(props) {
-    const { children } = props;
-    const logoImgSrc = "https://www.barren.k12.ky.us/docs/district/brand%20images/district%20logo/we%20are%20bc%201%20burgundy%20filled%20white%20font.png?id=85394";
+export default withWidth()(props => {
 
-    return(
-        <nav className="header">
-            <div className="left-nav nav-menu">
-                <ul className="nav-item-list">
-                    <li className="nav-logo">
-                      <img className='nav-logo' src={logoImgSrc} alt="Barren County Logo"/>
-                    </li>
-                    <li className='nav-item'>
-                        <Link className='nav-link' to='/'>Search</Link>
-                    </li>
-                    <li className='nav-item'>
-                        <Link className='nav-link' to='/index'>Edit</Link>
-                    </li>
-                </ul>
-            </div>
-            {/* <div className="right-nav nav-menu">
-                <ul class="nav-item-list">
-                    <li className='nav-item'>
-                        <Link className='nav-link' to='#'>Sign In</Link>
-                    </li>
-                </ul>
-            </div> */}
-        </nav>
-    );
-}
+    return <Grid item xs={12}>
+        <AppBar 
+            className={props.classes.appBar}
+            position='static'
+        >
+            <Toolbar className={props.classes.toolBar}>
+                <Link 
+                    className={props.classes.homeLink}
+                    onClick={() => props.handleDisplay(false)}
+                    to='/'
+                >
+                    <h1 className={props.classes.cyber}>Cyber</h1>
+                    <h1 className={props.classes.dex}>Dex</h1>
+                </Link>
+                <Container className={props.classes.acc}>
+                    <AccountBoxIcon/>
+                    {props.account.username !== '' ? (
+                        <Typography className={props.classes.accLink}>
+                            {props.account.username}
+                        </Typography>
+                    ) : (
+                        <Link 
+                            className={props.classes.accLink}
+                            onClick={() => props.handleDisplay()}
+                            to='/'
+                        >Log in</Link>
+                    )}
+                </Container>
+                <Container className={props.classes.right}>
+                    {props.account.username !== '' ? (
+                        props.width !== 'xs' && props.width !== 'sm' ? (
+                            <>
+                                <Link
+                                    className={props.classes.rightLink}
+                                    to='/account'
+                                >Account</Link>
+                                {(props.account.type === 'admin' || props.account.type === 'master') ? (
+                                    <>
+                                        <Link 
+                                            className={props.classes.rightLink}
+                                            to='/edit'
+                                        >Edit</Link>
+                                        <Link 
+                                            className={props.classes.rightLink}
+                                            to='/history' 
+                                        >History</Link>
+                                    </>
+                                ) : null }
+                                <Link
+                                    className={props.classes.rightLink}
+                                    onClick={() => props.handleLogOut()}
+                                    to='/'
+                                >Log out</Link>
+                            </>
+                        ) : (
+                            <Button
+                                onClick={() => props.handleDropdown(!props.dropdown)}
+                            >
+                                <MenuIcon/>
+                            </Button>
+                        )
+                    ) : null }
+                </Container>
+            </Toolbar>
+        </AppBar>
+        {props.dropdown === true ? (
+            <Container className={props.classes.headerMenu}
+            >
+                <Link
+                    className={props.classes.rightLink}
+                    to='/account'
+                >Account</Link>
+                {(props.account.type === 'admin' || props.account.type === 'master') ? (
+                    <>
+                        <Link 
+                            className={props.classes.rightLink}
+                            to='/edit'
+                        >Edit</Link>
+                        <Link 
+                            className={props.classes.rightLink}
+                            to='/history' 
+                        >History</Link>
+                    </>
+                ) : null }
+                <Link
+                    className={props.classes.rightLink}
+                    onClick={() => props.handleLogOut()}
+                    to='/'
+                >Log out</Link>
+            </Container>
+        ) : null }
+    </Grid>
+})
