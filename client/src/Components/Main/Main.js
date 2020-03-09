@@ -305,6 +305,7 @@ export default class Main extends Component {
                                                         this.resetDisplay();
                                                         setTimeout(() => {
                                                             this.iterateSearch(sheet.title);
+                                                            this.setState({ searchInput: sheet.title });
                                                         }, 500);
                                                     }}
                                                 >{sheet.title}</a>
@@ -331,6 +332,7 @@ export default class Main extends Component {
                                 editMode={editMode}
                                 setEditMode={this.setEditMode}
                                 searchInput={searchInput}
+                                iterateSearch={this.iterateSearch}
                                 resetDisplay={this.resetDisplay}
                             />
                         })

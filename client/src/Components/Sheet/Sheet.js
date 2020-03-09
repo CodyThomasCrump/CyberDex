@@ -414,6 +414,7 @@ export default class Sheet extends Component {
             editMode,
             setEditMode,
             searchInput,
+            iterateSearch,
             resetDisplay
         } = this.props, {
             sheetId,
@@ -447,6 +448,7 @@ export default class Sheet extends Component {
                 putSheet={putSheet}
                 setEditMode={setEditMode}
                 searchInput={searchInput}
+                iterateSearch={iterateSearch}
                 resetDisplay={resetDisplay}
                 editMode={editMode}
                 sheetId={sheetId}

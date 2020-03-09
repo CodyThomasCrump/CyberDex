@@ -10,13 +10,9 @@ import {
     Button,
 } from '@material-ui/core';
 import AccountBoxIcon from '@material-ui/icons/AccountBox';
-import MenuIcon from '@material-ui/icons/Menu'
+import MenuIcon from '@material-ui/icons/Menu';
 
 export default withWidth()(props => {
-
-    let state = {
-        dropdown: false
-    };
 
     return <Grid item xs={12}>
         <AppBar 

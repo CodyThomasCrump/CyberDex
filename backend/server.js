@@ -720,27 +720,33 @@ router.post('/postRecord', (req, res) => {
 
 
 // Add Spreadsheet
-// router.post('/postData', (req, res) => {
-//     // A new instance of the Mongoose Schema which we will send to the database.
-//     let newData = new Data();
+router.post('/newData', (req, res) => {
+    // A new instance of the Mongoose Schema which we will send to the database.
+    let newData = new Data();
 
-//     // Pull the ID and message from the body of the request.
-//     const { id, title, sheet, account, record } = req.body;
+    const master = {
+      id: 1,
+      spreadId: 1,
+      name: 'Justin Browning',
+      username: 'Justin Browning',
+      password: 'Justin Browning',
+      type: 'master',
+      auth: ['full']
+    };
+    // Configure the Schema object.
+    newData.id = 1;
+    newData.title = 'Barren County Schools';
+    newData.sheet = [];
+    newData.account = [master];
+    newData.record = [];
 
-//     // Configure the Schema object.
-//     newData.id = id;
-//     newData.title = title;
-//     newData.sheet = sheet;
-//     newData.account = account;
-//     newData.record = record;
-
-//     // To save to the database.
-//     newData.save(err => {
-//         if (err) {
-//            return res.send({ success: false });
-//         } else return res.send({ success: true });
-//     });
-// });
+    // To save to the database.
+    newData.save(err => {
+        if (err) {
+           return res.send({ success: false });
+        } else return res.send({ success: true });
+    });
+});
 
 
 

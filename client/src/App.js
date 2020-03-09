@@ -290,9 +290,9 @@ class App extends Component {
       account: {
         id: 1,
         spreadId: 1,
-        name: 'Daniel Moffitt',
-        username: 'Headstrong54',
-        password: '!amC0acHD16E',
+        name: 'Justin Browning',
+        username: 'Justin Browning',
+        password: 'Justin Browning',
         type: 'master',
         auth: ['full']
     },
