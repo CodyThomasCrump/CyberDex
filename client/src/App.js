@@ -288,13 +288,13 @@ class App extends Component {
       logInPassword: '',
       dropdown: false,
       account: {
-        id: 1,
+        id: '',
         spreadId: 1,
-        name: 'Justin Browning',
-        username: 'Justin Browning',
-        password: 'Justin Browning',
-        type: 'master',
-        auth: ['full']
+        name: '',
+        username: '',
+        password: '',
+        type: '',
+        auth: []
     },
       dbSpread: {
         id: '',
